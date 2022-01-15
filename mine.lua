@@ -8,9 +8,12 @@ local ignoreThese = { --yo noobs, figure out what the names of blocks you don't 
     "chisel:basalt2",
     "minecraft:dirt",
 }
---why the fuck are arrays called tables
- 
-local function getItemIndex(itemName) --return the index of requested item, or false if it isn't held
+
+--[[
+    returns the index of a requested item, or false if the turtle is not carrying one
+    @param  itemName    the specific name of the item you want to find
+]]--
+local function getItemIndex(itemName)
     turtle.select(1)
     for i = 1, 16, 1
     do
@@ -24,24 +27,26 @@ local function getItemIndex(itemName) --return the index of requested item, or f
 end
  
 local function refuel()
-    local bucketIndex = getItemIndex("minecraft:lava_bucket")
-    if(bucketIndex)
-    then
-        turtle.refuel()
-    else
-        print("no lava, looking for coal...")
-        local coalIndex = getItemIndex("minecraft:coal")
-        if(coalIndex)
+    while (turtle.getFuelLevel() < 1000)
+    do
+        local bucketIndex = getItemIndex("minecraft:lava_bucket")
+        if(bucketIndex) -- if I have a lava bucket in my inventory
         then
-            while(
-                turtle.getItemDetail() ~= nil and
-                turtle.getFuelLevel() < 1000)
-            do
-                turtle.refuel(1)
-            end
+            turtle.refuel()
         else
-            print("can't refuel!")
-            error("no lava or coal!")
+            print("found no lava, looking for coal...")
+            local coalIndex = getItemIndex("minecraft:coal")
+            if(coalIndex)
+            then
+                while( -- while the currently selected slot is NOT NOTHING and fuel level is below 1000
+                    turtle.getItemDetail() ~= nil and
+                    turtle.getFuelLevel() < 1000)
+                do
+                    turtle.refuel(1) -- refuel function from within the turtle API, not here
+                end
+            else
+                print("found no coal, looking again...")
+            end
         end
     end
 end
@@ -134,7 +139,9 @@ local function routine()
 end
  
 refuel()
-while(true)
+
+
+while(true) -- loop forever
 do
     routine()
 end
