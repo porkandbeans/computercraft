@@ -87,7 +87,9 @@ local function dumpInventory()
         end
  
         -- deposit all but lava + coal
-        if(turtle.getItemDetail() ~= nil and turtle.getItemDetail().name ~= ("minecraft:lava_bucket" or "minecraft:coal"))
+        if((turtle.getItemDetail() ~= nil) 
+        and (turtle.getItemDetail().name ~= "minecraft:lava_bucket") 
+        and (turtle.getItemDetail().name ~= "minecraft:coal"))
         then
             turtle.drop()
         end
