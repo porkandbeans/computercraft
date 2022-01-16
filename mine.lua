@@ -9,13 +9,15 @@ local ignoreThese = { --yo noobs, figure out what the names of blocks you don't 
     "minecraft:dirt",
 }
 
+local quitting = false
+
 --[[
-    returns the index of a requested item, or false if the turtle is not carrying one
-    @param  itemName    the specific name of the item you want to find
+    cycle through inventory and search for an item, return an int relating to the slot containing the item, or false if none was found
+    @param startingSlot the slot to start the cycle from
+    @param itemName the item you want to find
 ]]--
-local function getItemIndex(itemName)
-    turtle.select(1)
-    for i = 1, 16, 1
+local function cycleInventory(startingSlot, itemName)
+    for i = startingSlot, 16, 1
     do
         turtle.select(i)
         if(turtle.getItemDetail() ~= nil and turtle.getItemDetail().name == itemName)
@@ -23,7 +25,16 @@ local function getItemIndex(itemName)
             return i;
         end
     end
-    return false;
+end
+
+--[[
+    returns the index of a requested item, or false if the turtle is not carrying one
+    @param  itemName    the specific name of the item you want to find
+]]--
+local function getItemIndex(itemName)
+    turtle.select(1)
+    local slotNum = cycleInventory(1, itemName)
+    if(slotNum) then return true else return false;
 end
  
 local function refuel()
@@ -72,7 +83,36 @@ local function continue(steps)
     end
     turtle.turnLeft()
 end
- 
+
+local funciton sortCoal()
+    local doneSorting = false
+
+    while(doneSorting == false)
+    do
+        turtle.select(1)
+        if(turtle.getItemDetail().name ~= "minecraft:coal")
+            print("slot 1 is not coal! something very fucky is happening.")
+            quitting = true
+            return
+        end
+
+        local stackSize = turtle.getItemCount()
+        
+        if(stackSize == 64)
+        then
+            doneSorting = true
+            return
+        end
+
+        local spareCoal = cycleInventory(2, "minecraft:coal")
+
+        if(spareCoal)
+        then
+            turtle.select(spareCoal)
+        end
+    end
+end
+
 local function dumpInventory()
     for i = 1, 16, 1 --cycle through inventory
     do
@@ -92,6 +132,7 @@ local function dumpInventory()
         and (turtle.getItemDetail().name ~= "minecraft:coal"))
         then
             turtle.drop()
+        elseif((turtle.getItemDetail().name == "minecraft:coal") and ())
         end
     end
     turtle.turnLeft()
@@ -123,6 +164,10 @@ local function returnHome()
 end
  
 local function routine()
+    if(turtle.getItemDetail().name ~= "minecraft:coal")
+        print("slot 1 is not coal! something very fucky is happening.")
+        quitting = true
+        return
     print("performing routine")
     for i = 0, 30, 1
     do
@@ -141,7 +186,31 @@ end
 refuel()
 
 
-while(true) -- loop forever
+while(quitting == false) -- loop forever
 do
     routine()
+end--[[
+    cycle through inventory and search for an item, return an int relating to the slot containing the item, or false if none was found
+    @param startingSlot the slot to start the cycle from
+    @param itemName the item you want to find
+]]--
+local function cycleInventory(startingSlot, itemName)
+    for i = startingSlot, 16, 1
+    do
+        turtle.select(i)
+        if(turtle.getItemDetail() ~= nil and turtle.getItemDetail().name == itemName)
+        then
+            return i;
+        end
+    end
+end
+
+--[[
+    returns the index of a requested item, or false if the turtle is not carrying one
+    @param  itemName    the specific name of the item you want to find
+]]--
+local function getItemIndex(itemName)
+    turtle.select(1)
+    local slotNum = cycleInventory(1, itemName)
+    if(slotNum) then return true else return false;
 end

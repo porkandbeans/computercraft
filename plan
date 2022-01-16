@@ -1,0 +1,5 @@
+when at the chest at the end of a cycle:
+    if the turtle has a full stack of 64 coal, deposit any extra coal in the chest
+    if the turtle does not have a total of 64 coal in its inventory, do not deposit any coal
+    if the turtle has a stack below 64 in slot 1 and a stack somewhere else in the inventory,
+        move coal from the extra stack to slot 1 and deposit all the remaining coal
