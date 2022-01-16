@@ -12,5 +12,5 @@ doas cat /root/github_keys
 git add -A
 git commit -m "$CMESG"
 git push
-clear
+#clear
 echo "Done! screen cleared to protect github key."
